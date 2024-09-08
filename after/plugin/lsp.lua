@@ -1,14 +1,24 @@
-local lsp_zero = require('lsp-zero')
+vim.keymap.set('n', 'gl', '<cmd>lua vim.diagnostic.open_float()<cr>')
+vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<cr>')
+vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<cr>') 
 
-lsp_zero.on_attach(function(client, bufnr)
-	-- see :help lsp-zero-keybindings
-	-- to learn the available actions
-	lsp_zero.default_keymaps({buffer = bufnr})
-	vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
-	vim.keymap.set('n', '<leader>df', vim.lsp.buf.definition, opts)
-	vim.keymap.set('n', '<leader>us::', vim.lsp.buf.references, opts)
-end)
-
+vim.api.nvim_create_autocmd('LspAttach', {
+  desc = 'LSP actions',
+  callback = function(event)
+    local opts = {buffer = event.buf}
+	
+    vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+    vim.keymap.set('n', '<leader>df', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+    vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
+    vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
+    vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
+    vim.keymap.set('n', '<leader>us', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
+    vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+    vim.keymap.set('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+    vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
+    vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+  end
+})
 
 local cmp = require('cmp')
 cmp.setup({
@@ -48,14 +58,24 @@ cmp.setup({
 -- to learn how to use mason.nvim
 -- read this: https://github.com/VonHeikemen/lsp-zero.nvim/blob/v3.x/doc/md/guide/integrate-with-mason-nvim.md
 require('mason').setup({})
+
 require('mason-lspconfig').setup({
-	ensure_installed = {"clangd", "rust_analyzer", "pyright", "tssserver"},
+	ensure_installed = {"clangd", "rust_analyzer", "pyright"},
 	handlers = {
 		function(server_name)
-			if server_name == "tssserver" then
+			if server_name == "tsserver" then
 				server_name = "ts_ls"
 			end
 			require('lspconfig')[server_name].setup({})
-		end,
-	},
+		end
+	}
 })
+
+require("mason-lspconfig").setup_handlers({
+	function(server_name)
+		if server_name == "tsserver" then
+			server_name = "ts_ls"
+		end
+	end
+})
+

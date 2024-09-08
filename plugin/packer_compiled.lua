@@ -94,10 +94,10 @@ _G.packer_plugins = {
     path = "/Users/oskardurys/.local/share/nvim/site/pack/packer/start/gruvbox.nvim",
     url = "https://github.com/ellisonleao/gruvbox.nvim"
   },
-  ["lsp-zero.nvim"] = {
+  harpoon = {
     loaded = true,
-    path = "/Users/oskardurys/.local/share/nvim/site/pack/packer/start/lsp-zero.nvim",
-    url = "https://github.com/VonHeikemen/lsp-zero.nvim"
+    path = "/Users/oskardurys/.local/share/nvim/site/pack/packer/start/harpoon",
+    url = "https://github.com/ThePrimeagen/harpoon"
   },
   ["mason-lspconfig.nvim"] = {
     loaded = true,
@@ -115,7 +115,7 @@ _G.packer_plugins = {
     url = "https://github.com/xero/miasma.nvim"
   },
   ["nvim-autopairs"] = {
-    config = { "\27LJ\2\nw\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0B\0\2\1K\0\1\0\1\0\2\22ignored_next_char\v[%w%.]\30enable_check_bracket_line\2\nsetup\19nvim-autopairs\frequire\0" },
+    config = { "\27LJ\2\nw\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0B\0\2\1K\0\1\0\1\0\2\30enable_check_bracket_line\2\22ignored_next_char\v[%w%.]\nsetup\19nvim-autopairs\frequire\0" },
     loaded = false,
     needs_bufread = false,
     only_cond = false,
