@@ -17,6 +17,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
     vim.keymap.set('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
     vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
     vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+	vim.keymap.set('n', 'sh', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
   end
 })
 
@@ -24,6 +25,7 @@ local cmp = require('cmp')
 cmp.setup({
 	sources = {
 		{name = 'nvim_lsp'},
+		{name = 'nvim_lsp_signature_help'}
 	},
 	mapping = {
 		['<Enter>'] = cmp.mapping.confirm({select = false}),
@@ -78,4 +80,3 @@ require("mason-lspconfig").setup_handlers({
 		end
 	end
 })
-

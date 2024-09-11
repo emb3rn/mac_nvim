@@ -33,6 +33,8 @@ return require('packer').startup(function(use)
 			}
 		end
 	}
+	-- LSP Signature Help
+	use {'ray-x/lsp_signature.nvim'}
 	-- Github Copilot
 	use {"github/copilot.vim"}
 	-- Undo Trees
