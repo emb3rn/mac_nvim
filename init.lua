@@ -13,3 +13,4 @@ vim.cmd(':')
 vim.g.netrw_banner = 0
 local opt = vim.opt
 opt.wrap = false
+opt.termguicolors = true

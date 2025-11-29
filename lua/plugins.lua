@@ -76,5 +76,7 @@ return require('packer').startup(function(use)
 		}
 	})
 	-- Minimal Notifications
-	use 'rcarriga/nvim-notify'	
+	use 'rcarriga/nvim-notify'
+	-- Wilder (Cmdline autocomplete)
+	use 'gelguy/wilder.nvim'
 end)
