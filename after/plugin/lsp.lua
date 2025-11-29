@@ -21,6 +21,17 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end
 })
 
+vim.diagnostic.config({
+	signs = {
+		text = {
+			[vim.diagnostic.severity.ERROR] = '▎',
+			[vim.diagnostic.severity.WARN]  = '▎',
+			[vim.diagnostic.severity.INFO]  = '▎',
+			[vim.diagnostic.severity.HINT]  = '▎',
+		}
+	}
+})
+
 local cmp = require('cmp')
 cmp.setup({
 	sources = {
@@ -60,23 +71,35 @@ cmp.setup({
 -- to learn how to use mason.nvim
 -- read this: https://github.com/VonHeikemen/lsp-zero.nvim/blob/v3.x/doc/md/guide/integrate-with-mason-nvim.md
 require('mason').setup({})
-
 require('mason-lspconfig').setup({
-	ensure_installed = {"clangd", "rust_analyzer", "pyright"},
+	ensure_installed = { "clangd", "rust_analyzer", "pyright" },
 	handlers = {
 		function(server_name)
 			if server_name == "tsserver" then
 				server_name = "ts_ls"
 			end
-			require('lspconfig')[server_name].setup({})
-		end
-	}
-})
 
-require("mason-lspconfig").setup_handlers({
-	function(server_name)
-		if server_name == "tsserver" then
-			server_name = "ts_ls"
-		end
-	end
+			-- Explicit setup for Pyright with relaxed checks
+			if server_name == "pyright" then
+				require('lspconfig').pyright.setup({
+					settings = {
+						python = {
+							analysis = {
+								typeCheckingMode = "off",  -- "off" = no strict errors; "basic" = light checking
+								diagnosticSeverityOverrides = {
+									reportAttributeAccessIssue = "none",
+									reportOptionalMemberAccess = "none",
+									reportOptionalOperand = "none",
+									reportGeneralTypeIssues = "none",
+								},
+							},
+						},
+					},
+				})
+			else
+				-- Default setup for other LSP servers
+				require('lspconfig')[server_name].setup({})
+			end
+		end,
+	},
 })
