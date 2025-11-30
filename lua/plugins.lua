@@ -5,6 +5,7 @@ return require('packer').startup(function(use)
 	use 'wbthomason/packer.nvim'
 	--Syntax Highlighting
 	use 'nvim-treesitter/nvim-treesitter'
+	use 'nvim-treesitter/nvim-treesitter-textobjects'
 	--Themes
 	use {"xero/miasma.nvim"}
 	use {"ellisonleao/gruvbox.nvim"}
@@ -40,19 +41,7 @@ return require('packer').startup(function(use)
 			}
 		end
 	}
-	use {
-		"utilyre/sentiment.nvim",
-		tag = "*",
-		setup = function()
-			vim.g.loaded_matchparen = 1
-		end,
-		config = function()
-			require("sentiment").setup({
-				-- Add optional config here
-				-- delay = 50,
-			})
-		end,
-	}
+	use "utilyre/sentiment.nvim"
 	-- LSP Signature Help
 	use {'ray-x/lsp_signature.nvim'}
 	-- Github Copilot
@@ -79,4 +68,9 @@ return require('packer').startup(function(use)
 	use 'rcarriga/nvim-notify'
 	-- Wilder (Cmdline autocomplete)
 	use 'gelguy/wilder.nvim'
+	-- Status Line
+	use {
+		'nvim-lualine/lualine.nvim',
+		requires = { 'nvim-tree/nvim-web-devicons', opt = true }
+	}
 end)

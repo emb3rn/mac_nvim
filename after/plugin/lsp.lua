@@ -72,7 +72,7 @@ cmp.setup({
 -- read this: https://github.com/VonHeikemen/lsp-zero.nvim/blob/v3.x/doc/md/guide/integrate-with-mason-nvim.md
 require('mason').setup({})
 require('mason-lspconfig').setup({
-	ensure_installed = { "clangd", "rust_analyzer", "pyright" },
+	ensure_installed = { "clangd", "rust_analyzer", "pyright", "ruff" },
 	handlers = {
 		function(server_name)
 			if server_name == "tsserver" then
@@ -96,6 +96,13 @@ require('mason-lspconfig').setup({
 						},
 					},
 				})
+            elseif server_name == "ruff" then
+                require('lspconfig').ruff.setup({
+                    on_attach = function(client, bufnr)
+                        -- Disable hover in favor of Pyright
+                        client.server_capabilities.hoverProvider = false
+                    end
+                })
 			else
 				-- Default setup for other LSP servers
 				require('lspconfig')[server_name].setup({})

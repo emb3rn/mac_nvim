@@ -1,3 +1,4 @@
+vim.g.loaded_matchparen = 1
 require("plugins")
 require("remap")
 vim.g.mapleader = ' '
