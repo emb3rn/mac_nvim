@@ -101,7 +101,12 @@ require('mason-lspconfig').setup({
                     on_attach = function(client, bufnr)
                         -- Disable hover in favor of Pyright
                         client.server_capabilities.hoverProvider = false
-                    end
+                    end,
+                    settings = {
+                        args = {
+                            "--select", "W291"
+                        },
+                    },
                 })
 			else
 				-- Default setup for other LSP servers

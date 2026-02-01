@@ -14,14 +14,27 @@ return require('packer').startup(function(use)
 	use {"xiyaowong/transparent.nvim"}
 	use {"projekt0n/github-nvim-theme"}
 	use { "catppuccin/nvim", as = "catppuccin" }	
+	-- Git Integration
+	use "tpope/vim-fugitive"
+	use "lewis6991/gitsigns.nvim"
 	--File Explorer
 	use 'nvim-tree/nvim-tree.lua'
 	use 'nvim-tree/nvim-web-devicons'
 	--Fuzzy Finder	
 	use {
+		'dmtrKovalenko/fff.nvim',
+		run = function() require('fff.download').download_or_build_binary() end
+	}
+	use {
 		'nvim-telescope/telescope.nvim', tag = '0.1.6',
 		requires = { {'nvim-lua/plenary.nvim'} }
 	}
+	-- Lua Development
+	use {
+		"folke/lazydev.nvim",
+		ft = "lua", -- only load on lua files
+	}
+	use { "Bilal2453/luvit-meta", lazy = true } -- optional `vim.uv` typings
 	--LSP/Autocomplete
 	use "williamboman/mason.nvim"
 	use "williamboman/mason-lspconfig.nvim"
@@ -30,6 +43,8 @@ return require('packer').startup(function(use)
 	use 'hrsh7th/nvim-cmp'
 	use 'hrsh7th/cmp-nvim-lsp'
 	use 'L3MON4D3/LuaSnip'
+	-- Linting
+	use 'mfussenegger/nvim-lint'
 	-- Brackets
 	use {
 		"windwp/nvim-autopairs",

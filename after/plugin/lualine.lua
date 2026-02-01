@@ -4,44 +4,44 @@ require('lualine').setup {
     theme = {
       -- Custom transparent theme
       normal = {
-        a = { fg = '#ffffff', bg = 'none' }, -- Mode section
-        b = { fg = '#ffffff', bg = 'none' }, -- Git branch, diff, diagnostics
-        c = { fg = '#ffffff', bg = 'none' }, -- Filename
-        x = { fg = '#ffffff', bg = 'none' }, -- Encoding, fileformat, filetype
-        y = { fg = '#ffffff', bg = 'none' }, -- Progress
-        z = { fg = '#ffffff', bg = 'none' }, -- Location
+        a = { fg = '#ffffff', bg = 'NONE' },
+        b = { fg = '#ffffff', bg = 'NONE' },
+        c = { fg = '#ffffff', bg = 'NONE' },
+        x = { fg = '#ffffff', bg = 'NONE' },
+        y = { fg = '#ffffff', bg = 'NONE' },
+        z = { fg = '#ffffff', bg = 'NONE' },
       },
       insert = {
-        a = { fg = '#8aff8a', bg = 'none' }, -- Green for insert mode (example)
-        b = { fg = '#ffffff', bg = 'none' },
-        c = { fg = '#ffffff', bg = 'none' },
-        x = { fg = '#ffffff', bg = 'none' },
-        y = { fg = '#ffffff', bg = 'none' },
-        z = { fg = '#ffffff', bg = 'none' },
+        a = { fg = '#8aff8a', bg = 'NONE' },
+        b = { fg = '#ffffff', bg = 'NONE' },
+        c = { fg = '#ffffff', bg = 'NONE' },
+        x = { fg = '#ffffff', bg = 'NONE' },
+        y = { fg = '#ffffff', bg = 'NONE' },
+        z = { fg = '#ffffff', bg = 'NONE' },
       },
       visual = {
-        a = { fg = '#ffcc00', bg = 'none' }, -- Yellow for visual mode (example)
-        b = { fg = '#ffffff', bg = 'none' },
-        c = { fg = '#ffffff', bg = 'none' },
-        x = { fg = '#ffffff', bg = 'none' },
-        y = { fg = '#ffffff', bg = 'none' },
-        z = { fg = '#ffffff', bg = 'none' },
+        a = { fg = '#ffcc00', bg = 'NONE' },
+        b = { fg = '#ffffff', bg = 'NONE' },
+        c = { fg = '#ffffff', bg = 'NONE' },
+        x = { fg = '#ffffff', bg = 'NONE' },
+        y = { fg = '#ffffff', bg = 'NONE' },
+        z = { fg = '#ffffff', bg = 'NONE' },
       },
       replace = {
-        a = { fg = '#ff8a8a', bg = 'none' }, -- Red for replace mode (example)
-        b = { fg = '#ffffff', bg = 'none' },
-        c = { fg = '#ffffff', bg = 'none' },
-        x = { fg = '#ffffff', bg = 'none' },
-        y = { fg = '#ffffff', bg = 'none' },
-        z = { fg = '#ffffff', bg = 'none' },
+        a = { fg = '#ff8a8a', bg = 'NONE' },
+        b = { fg = '#ffffff', bg = 'NONE' },
+        c = { fg = '#ffffff', bg = 'NONE' },
+        x = { fg = '#ffffff', bg = 'NONE' },
+        y = { fg = '#ffffff', bg = 'NONE' },
+        z = { fg = '#ffffff', bg = 'NONE' },
       },
       command = {
-        a = { fg = '#8a8aff', bg = 'none' }, -- Blue for command mode (example)
-        b = { fg = '#ffffff', bg = 'none' },
-        c = { fg = '#ffffff', bg = 'none' },
-        x = { fg = '#ffffff', bg = 'none' },
-        y = { fg = '#ffffff', bg = 'none' },
-        z = { fg = '#ffffff', bg = 'none' },
+        a = { fg = '#8a8aff', bg = 'NONE' },
+        b = { fg = '#ffffff', bg = 'NONE' },
+        c = { fg = '#ffffff', bg = 'NONE' },
+        x = { fg = '#ffffff', bg = 'NONE' },
+        y = { fg = '#ffffff', bg = 'NONE' },
+        z = { fg = '#ffffff', bg = 'NONE' },
       },
     },
     component_separators = { left = '', right = ''},
