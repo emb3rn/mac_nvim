@@ -22,6 +22,9 @@ local packer = require('packer').startup(function(use)
     -- Theme
     use { 'projekt0n/github-nvim-theme' }
 
+    -- Git integration
+    use 'lewis6991/gitsigns.nvim'
+
     -- File explorer
     use 'nvim-tree/nvim-tree.lua'
     use 'nvim-tree/nvim-web-devicons'
@@ -33,6 +36,13 @@ local packer = require('packer').startup(function(use)
     }
     use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
 
+    -- Lua development (type hints/signatures for the Neovim Lua API)
+    use {
+        'folke/lazydev.nvim',
+        ft = 'lua',
+    }
+    use { 'Bilal2453/luvit-meta', lazy = true } -- optional `vim.uv` typings
+
     -- LSP / autocomplete
     use 'williamboman/mason.nvim'
     use 'williamboman/mason-lspconfig.nvim'
@@ -41,6 +51,9 @@ local packer = require('packer').startup(function(use)
     use 'hrsh7th/cmp-nvim-lsp'
     use 'L3MON4D3/LuaSnip'
     use { 'ray-x/lsp_signature.nvim' }
+
+    -- Linting
+    use 'mfussenegger/nvim-lint'
 
     -- Brackets
     use {
