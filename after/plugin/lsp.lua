@@ -7,17 +7,47 @@ vim.api.nvim_create_autocmd('LspAttach', {
   callback = function(event)
     local opts = {buffer = event.buf}
 	
-    vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-    vim.keymap.set('n', '<leader>df', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
-    vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
-    vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
-    vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
-    vim.keymap.set('n', '<leader>us', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
-    vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-    vim.keymap.set('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-    vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
-    vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
-	vim.keymap.set('n', 'sh', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+    -- Override builtin `gd` (text-search "local declaration", stays in the
+    -- current file) with the real LSP definition request, which jumps
+    -- across files.
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+    vim.keymap.set('n', 'gi', function()
+      local clients = vim.lsp.get_clients({bufnr = 0})
+      if #clients == 0 then
+        vim.notify('No LSP server attached to this buffer', vim.log.levels.WARN)
+        return
+      end
+      for _, client in ipairs(clients) do
+        if client:supports_method('textDocument/implementation') then
+          vim.lsp.buf.implementation()
+          return
+        end
+      end
+      -- Pyright (the open-source server) never implemented
+      -- textDocument/implementation — that was kept Pylance-exclusive — so
+      -- there's no server here to ask. Definition is the closest useful
+      -- fallback in Python, which has no real interface/vtable dispatch.
+      vim.lsp.buf.definition()
+    end, opts)
+    vim.keymap.set('n', 'go', vim.lsp.buf.type_definition, opts)
+    -- Telescope's references picker previews the destination live as you
+    -- move the selection, unlike the default quickfix list (which only
+    -- jumps on <CR>).
+    local function references_picker()
+      local ok, builtin = pcall(require, 'telescope.builtin')
+      if ok then
+        builtin.lsp_references()
+      else
+        vim.lsp.buf.references()
+      end
+    end
+    vim.keymap.set('n', '<leader>gr', references_picker, opts)
+    vim.keymap.set('n', 'gs', vim.lsp.buf.signature_help, opts)
+    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+    vim.keymap.set({'n', 'x'}, '<F3>', function() vim.lsp.buf.format({async = true}) end, opts)
+    vim.keymap.set('n', '<F4>', vim.lsp.buf.code_action, opts)
   end
 })
 
@@ -38,6 +68,16 @@ cmp.setup({
 		{name = 'nvim_lsp'},
 		{name = 'nvim_lsp_signature_help'}
 	},
+	window = {
+		completion = {
+			winhighlight = "Normal:CmpPmenu,FloatBorder:CmpPmenuBorder,CursorLine:PmenuSel,Search:None",
+			width = 0.4, -- 40% of editor width
+			col_offset = 3,
+		},
+		documentation = {
+			winhighlight = "Normal:CmpDoc,FloatBorder:CmpDocBorder",
+		},
+	},
 	mapping = {
 		['<Enter>'] = cmp.mapping.confirm({select = false}),
 		['<C-e>'] = cmp.mapping.abort(),
@@ -56,6 +96,7 @@ cmp.setup({
 			else
 				cmp.complete()
 			end
+			
 		end),
 	},
 	snippet = {
@@ -63,50 +104,68 @@ cmp.setup({
 			require('luasnip').lsp_expand(args.body)
 		end,
 	},
+	performance = {
+		max_view_entries = 8,
+	},
 	completion = {
-		completeopt = 'menu,menuone,noinsert'
+		completeopt = 'menu,menuone,noinsert',
 	}
 })
 
 -- to learn how to use mason.nvim
 -- read this: https://github.com/VonHeikemen/lsp-zero.nvim/blob/v3.x/doc/md/guide/integrate-with-mason-nvim.md
+--
+-- NOTE: mason-lspconfig v2 (Neovim 0.11+) dropped the old `handlers` option in
+-- favor of `vim.lsp.config()` + automatic `vim.lsp.enable()`. The `handlers`
+-- table used to live here, but it was silently ignored (no error, no effect),
+-- meaning the Pyright/ruff customizations below were never actually applied.
 require('mason').setup({})
 require('mason-lspconfig').setup({
 	ensure_installed = { "clangd", "rust_analyzer", "pyright", "ruff" },
-	handlers = {
-		function(server_name)
-			if server_name == "tsserver" then
-				server_name = "ts_ls"
-			end
+	-- automatic_enable defaults to true: every Mason-installed server is
+	-- started automatically via vim.lsp.enable(), picking up the
+	-- vim.lsp.config() overrides defined below.
+})
 
-			-- Explicit setup for Pyright with relaxed checks
-			if server_name == "pyright" then
-				require('lspconfig').pyright.setup({
-					settings = {
-						python = {
-							analysis = {
-								typeCheckingMode = "off",  -- "off" = no strict errors; "basic" = light checking
-								diagnosticSeverityOverrides = {
-									reportAttributeAccessIssue = "none",
-									reportOptionalMemberAccess = "none",
-									reportOptionalOperand = "none",
-									reportGeneralTypeIssues = "none",
-								},
-							},
-						},
-					},
-				})
-            elseif server_name == "ruff" then
-                require('lspconfig').ruff.setup({
-                    on_attach = function(client, bufnr)
-                        -- Disable hover in favor of Pyright
-                        client.server_capabilities.hoverProvider = false
-                    end
-                })
-			else
-				-- Default setup for other LSP servers
-				require('lspconfig')[server_name].setup({})
-			end
-		end,
+-- Pyright: relaxed checks + force implementationProvider capability
+vim.lsp.config('pyright', {
+	on_attach = function(client, bufnr)
+		-- Force implementationProvider capability (Pyright supports it but sometimes doesn't advertise it)
+		if client.server_capabilities then
+			client.server_capabilities.implementationProvider = client.server_capabilities.implementationProvider or { resolveProvider = true }
+		end
+		vim.notify('Pyright attached (buf ' .. bufnr .. ') — impl=' .. tostring(client:supports_method('textDocument/implementation')), vim.log.levels.INFO)
+	end,
+	settings = {
+		python = {
+			analysis = {
+				typeCheckingMode = "basic",  -- "off" = no strict errors; "basic" = light checking
+				diagnosticSeverityOverrides = {
+					reportAttributeAccessIssue = "none",
+					reportOptionalMemberAccess = "none",
+					reportOptionalOperand = "none",
+					reportGeneralTypeIssues = "none",
+				},
+			},
+		},
 	},
+})
+
+-- ruff: disable hover in favor of Pyright
+vim.lsp.config('ruff', {
+	on_attach = function(client, bufnr)
+		client.server_capabilities.hoverProvider = false
+	end,
+})
+
+-- Ensure selected CMP item is visible and menu uses default opaque background
+local function set_cmp_hl()
+  vim.api.nvim_set_hl(0, 'CmpPmenuSel', { fg = 'white', bg = '#313740' }) -- Visible background for selected item
+  vim.api.nvim_set_hl(0, 'CmpPmenu', { link = 'Normal' }) -- Inherit opaque background from Normal
+end
+
+set_cmp_hl()
+vim.api.nvim_create_autocmd('ColorScheme', {
+  pattern = '*',
+  callback = set_cmp_hl,
 })

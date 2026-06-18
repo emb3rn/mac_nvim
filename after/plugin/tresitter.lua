@@ -12,7 +12,7 @@ require'nvim-treesitter.configs'.setup {
     disable = { "c", "rust" },
     additional_vim_regex_highlighting = false,
   },
-  
+
   textobjects = {
     select = {
       enable = true,
@@ -27,3 +27,15 @@ require'nvim-treesitter.configs'.setup {
     },
   },
 }
+
+-- Enable treesitter folding (uses Neovim's built-in treesitter foldexpr,
+-- since nvim-treesitter's own `nvim_treesitter#foldexpr()` is buggy/deprecated
+-- in favor of `vim.treesitter.foldexpr()`)
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldlevel = 99 -- Open all folds by default
+
+-- Fold keymaps
+vim.keymap.set("n", "<leader>fa", "zM", { desc = "Fold all", silent = true })
+vim.keymap.set("n", "<leader>ua", "zR", { desc = "Unfold all", silent = true })
+vim.keymap.set("n", "<leader>fd", "za", { desc = "Toggle fold under cursor", silent = true })

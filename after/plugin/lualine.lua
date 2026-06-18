@@ -1,48 +1,25 @@
+-- Override StatusLine highlight to be transparent (runs before lualine setup)
+local function set_statusline_hl()
+  vim.api.nvim_set_hl(0, 'StatusLine', { bg = 'NONE', fg = '#a7aab0' })
+  vim.api.nvim_set_hl(0, 'StatusLineNC', { bg = 'NONE', fg = '#6e7681' })
+end
+
+set_statusline_hl()
+vim.api.nvim_create_autocmd('ColorScheme', {
+  pattern = '*',
+  callback = set_statusline_hl,
+})
+
 require('lualine').setup {
   options = {
     icons_enabled = true,
     theme = {
-      -- Custom transparent theme
-      normal = {
-        a = { fg = '#ffffff', bg = 'none' }, -- Mode section
-        b = { fg = '#ffffff', bg = 'none' }, -- Git branch, diff, diagnostics
-        c = { fg = '#ffffff', bg = 'none' }, -- Filename
-        x = { fg = '#ffffff', bg = 'none' }, -- Encoding, fileformat, filetype
-        y = { fg = '#ffffff', bg = 'none' }, -- Progress
-        z = { fg = '#ffffff', bg = 'none' }, -- Location
-      },
-      insert = {
-        a = { fg = '#8aff8a', bg = 'none' }, -- Green for insert mode (example)
-        b = { fg = '#ffffff', bg = 'none' },
-        c = { fg = '#ffffff', bg = 'none' },
-        x = { fg = '#ffffff', bg = 'none' },
-        y = { fg = '#ffffff', bg = 'none' },
-        z = { fg = '#ffffff', bg = 'none' },
-      },
-      visual = {
-        a = { fg = '#ffcc00', bg = 'none' }, -- Yellow for visual mode (example)
-        b = { fg = '#ffffff', bg = 'none' },
-        c = { fg = '#ffffff', bg = 'none' },
-        x = { fg = '#ffffff', bg = 'none' },
-        y = { fg = '#ffffff', bg = 'none' },
-        z = { fg = '#ffffff', bg = 'none' },
-      },
-      replace = {
-        a = { fg = '#ff8a8a', bg = 'none' }, -- Red for replace mode (example)
-        b = { fg = '#ffffff', bg = 'none' },
-        c = { fg = '#ffffff', bg = 'none' },
-        x = { fg = '#ffffff', bg = 'none' },
-        y = { fg = '#ffffff', bg = 'none' },
-        z = { fg = '#ffffff', bg = 'none' },
-      },
-      command = {
-        a = { fg = '#8a8aff', bg = 'none' }, -- Blue for command mode (example)
-        b = { fg = '#ffffff', bg = 'none' },
-        c = { fg = '#ffffff', bg = 'none' },
-        x = { fg = '#ffffff', bg = 'none' },
-        y = { fg = '#ffffff', bg = 'none' },
-        z = { fg = '#ffffff', bg = 'none' },
-      },
+      normal = { a = { bg = 'NONE', fg = '#a7aab0' }, b = { bg = 'NONE', fg = '#a7aab0' }, c = { bg = 'NONE', fg = '#a7aab0' }, x = { bg = 'NONE', fg = '#a7aab0' }, y = { bg = 'NONE', fg = '#a7aab0' }, z = { bg = 'NONE', fg = '#a7aab0' } },
+      insert = { a = { bg = 'NONE', fg = '#8aff8a' }, b = { bg = 'NONE', fg = '#a7aab0' }, c = { bg = 'NONE', fg = '#a7aab0' }, x = { bg = 'NONE', fg = '#a7aab0' }, y = { bg = 'NONE', fg = '#a7aab0' }, z = { bg = 'NONE', fg = '#a7aab0' } },
+      visual = { a = { bg = 'NONE', fg = '#ffcc00' }, b = { bg = 'NONE', fg = '#a7aab0' }, c = { bg = 'NONE', fg = '#a7aab0' }, x = { bg = 'NONE', fg = '#a7aab0' }, y = { bg = 'NONE', fg = '#a7aab0' }, z = { bg = 'NONE', fg = '#a7aab0' } },
+      replace = { a = { bg = 'NONE', fg = '#ff8a8a' }, b = { bg = 'NONE', fg = '#a7aab0' }, c = { bg = 'NONE', fg = '#a7aab0' }, x = { bg = 'NONE', fg = '#a7aab0' }, y = { bg = 'NONE', fg = '#a7aab0' }, z = { bg = 'NONE', fg = '#a7aab0' } },
+      command = { a = { bg = 'NONE', fg = '#8a8aff' }, b = { bg = 'NONE', fg = '#a7aab0' }, c = { bg = 'NONE', fg = '#a7aab0' }, x = { bg = 'NONE', fg = '#a7aab0' }, y = { bg = 'NONE', fg = '#a7aab0' }, z = { bg = 'NONE', fg = '#a7aab0' } },
+      inactive = { a = { bg = 'NONE', fg = '#6e7681' }, b = { bg = 'NONE', fg = '#6e7681' }, c = { bg = 'NONE', fg = '#6e7681' }, x = { bg = 'NONE', fg = '#6e7681' }, y = { bg = 'NONE', fg = '#6e7681' }, z = { bg = 'NONE', fg = '#6e7681' } },
     },
     component_separators = { left = '', right = ''},
     section_separators = { left = '', right = ''},

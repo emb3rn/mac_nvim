@@ -28,9 +28,9 @@ require("neo-tree").setup({
 vim.api.nvim_create_autocmd('ColorScheme', {
   pattern = '*',
   callback = function()
-    vim.api.nvim_set_hl(0, 'NeoTreeNormal', { bg = 'none', ctermbg = 'none' })
-    vim.api.nvim_set_hl(0, 'NeoTreeNormalNC', { bg = 'none', ctermbg = 'none' })
-    vim.api.nvim_set_hl(0, 'NeoTreeEndOfBuffer', { bg = 'none', ctermbg = 'none' })
-    vim.api.nvim_set_hl(0, 'NeoTreeWinSeparator', { bg = 'none', ctermbg = 'none' })
+    vim.api.nvim_set_hl(0, 'NeoTreeNormal', { link = 'Normal' })
+    vim.api.nvim_set_hl(0, 'NeoTreeNormalNC', { link = 'Normal' })
+    vim.api.nvim_set_hl(0, 'NeoTreeEndOfBuffer', { link = 'EndOfBuffer' })
+    vim.api.nvim_set_hl(0, 'NeoTreeWinSeparator', { link = 'Normal' })
   end
 })

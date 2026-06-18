@@ -25,7 +25,7 @@ wilder.set_option('renderer', wilder.popupmenu_renderer(
 ))
 
 local function set_wilder_hl()
-  vim.api.nvim_set_hl(0, 'WilderMenu', { bg = 'none', ctermbg = 'none' })
+  vim.api.nvim_set_hl(0, 'WilderMenu', { link = 'Pmenu' })
 end
 
 set_wilder_hl()

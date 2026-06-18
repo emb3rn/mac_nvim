@@ -11,17 +11,17 @@ return require('packer').startup(function(use)
 	use {"ellisonleao/gruvbox.nvim"}
 	use {"navarasu/onedark.nvim"}
 	use {"ayu-theme/ayu-vim"}
-	use {"xiyaowong/transparent.nvim"}
 	use {"projekt0n/github-nvim-theme"}
 	use { "catppuccin/nvim", as = "catppuccin" }	
 	--File Explorer
 	use 'nvim-tree/nvim-tree.lua'
 	use 'nvim-tree/nvim-web-devicons'
-	--Fuzzy Finder	
+	--Fuzzy Finder
 	use {
-		'nvim-telescope/telescope.nvim', tag = '0.1.6',
+		'nvim-telescope/telescope.nvim',
 		requires = { {'nvim-lua/plenary.nvim'} }
 	}
+	use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
 	--LSP/Autocomplete
 	use "williamboman/mason.nvim"
 	use "williamboman/mason-lspconfig.nvim"
@@ -46,6 +46,8 @@ return require('packer').startup(function(use)
 	use {'ray-x/lsp_signature.nvim'}
 	-- Github Copilot
 	use {"github/copilot.vim"}
+	-- Sidekick
+	use {"folke/sidekick.nvim"}
 	-- Undo Trees
 	use "mbbill/undotree"
 	---Harpoon
@@ -73,4 +75,6 @@ return require('packer').startup(function(use)
 		'nvim-lualine/lualine.nvim',
 		requires = { 'nvim-tree/nvim-web-devicons', opt = true }
 	}
+	-- Bufferline (VSCode-style tabs at the top)
+	use {'akinsho/bufferline.nvim', requires = { 'nvim-tree/nvim-web-devicons', opt = true }}
 end)

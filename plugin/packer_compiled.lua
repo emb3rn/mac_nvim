@@ -49,8 +49,8 @@ local function save_profiles(threshold)
 end
 
 time([[Luarocks path setup]], true)
-local package_path_str = "/Users/oskardurys/.cache/nvim/packer_hererocks/2.1.1744318430/share/lua/5.1/?.lua;/Users/oskardurys/.cache/nvim/packer_hererocks/2.1.1744318430/share/lua/5.1/?/init.lua;/Users/oskardurys/.cache/nvim/packer_hererocks/2.1.1744318430/lib/luarocks/rocks-5.1/?.lua;/Users/oskardurys/.cache/nvim/packer_hererocks/2.1.1744318430/lib/luarocks/rocks-5.1/?/init.lua"
-local install_cpath_pattern = "/Users/oskardurys/.cache/nvim/packer_hererocks/2.1.1744318430/lib/lua/5.1/?.so"
+local package_path_str = "/Users/oskardurys/.cache/nvim/packer_hererocks/2.1.1772619647/share/lua/5.1/?.lua;/Users/oskardurys/.cache/nvim/packer_hererocks/2.1.1772619647/share/lua/5.1/?/init.lua;/Users/oskardurys/.cache/nvim/packer_hererocks/2.1.1772619647/lib/luarocks/rocks-5.1/?.lua;/Users/oskardurys/.cache/nvim/packer_hererocks/2.1.1772619647/lib/luarocks/rocks-5.1/?/init.lua"
+local install_cpath_pattern = "/Users/oskardurys/.cache/nvim/packer_hererocks/2.1.1772619647/lib/lua/5.1/?.so"
 if not string.find(package.path, package_path_str, 1, true) then
   package.path = package.path .. ';' .. package_path_str
 end
@@ -83,6 +83,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/oskardurys/.local/share/nvim/site/pack/packer/start/ayu-vim",
     url = "https://github.com/ayu-theme/ayu-vim"
+  },
+  ["bufferline.nvim"] = {
+    loaded = true,
+    path = "/Users/oskardurys/.local/share/nvim/site/pack/packer/start/bufferline.nvim",
+    url = "https://github.com/akinsho/bufferline.nvim"
   },
   catppuccin = {
     loaded = true,
@@ -150,7 +155,7 @@ _G.packer_plugins = {
     url = "https://github.com/MunifTanjim/nui.nvim"
   },
   ["nvim-autopairs"] = {
-    config = { "\27LJ\2\nw\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0B\0\2\1K\0\1\0\1\0\2\30enable_check_bracket_line\2\22ignored_next_char\v[%w%.]\nsetup\19nvim-autopairs\frequire\0" },
+    config = { "\27LJ\2\nw\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0B\0\2\1K\0\1\0\1\0\2\22ignored_next_char\v[%w%.]\30enable_check_bracket_line\2\nsetup\19nvim-autopairs\frequire\0" },
     loaded = false,
     needs_bufread = false,
     only_cond = false,
@@ -212,15 +217,15 @@ _G.packer_plugins = {
     path = "/Users/oskardurys/.local/share/nvim/site/pack/packer/start/sentiment.nvim",
     url = "https://github.com/utilyre/sentiment.nvim"
   },
+  ["sidekick.nvim"] = {
+    loaded = true,
+    path = "/Users/oskardurys/.local/share/nvim/site/pack/packer/start/sidekick.nvim",
+    url = "https://github.com/folke/sidekick.nvim"
+  },
   ["telescope.nvim"] = {
     loaded = true,
     path = "/Users/oskardurys/.local/share/nvim/site/pack/packer/start/telescope.nvim",
     url = "https://github.com/nvim-telescope/telescope.nvim"
-  },
-  ["transparent.nvim"] = {
-    loaded = true,
-    path = "/Users/oskardurys/.local/share/nvim/site/pack/packer/start/transparent.nvim",
-    url = "https://github.com/xiyaowong/transparent.nvim"
   },
   undotree = {
     loaded = true,
