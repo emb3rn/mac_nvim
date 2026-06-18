@@ -1,80 +1,95 @@
-vim.cmd [[packadd packer.nvim]]
+-- Bootstrap packer.nvim on a fresh machine/clone where it isn't installed yet.
+local install_path = vim.fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
+local bootstrap = false
+if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
+    bootstrap = true
+    vim.fn.system({
+        'git', 'clone', '--depth', '1',
+        'https://github.com/wbthomason/packer.nvim',
+        install_path,
+    })
+end
 
-return require('packer').startup(function(use)
-	--Packer	
-	use 'wbthomason/packer.nvim'
-	--Syntax Highlighting
-	use 'nvim-treesitter/nvim-treesitter'
-	use 'nvim-treesitter/nvim-treesitter-textobjects'
-	--Themes
-	use {"xero/miasma.nvim"}
-	use {"ellisonleao/gruvbox.nvim"}
-	use {"navarasu/onedark.nvim"}
-	use {"ayu-theme/ayu-vim"}
-	use {"projekt0n/github-nvim-theme"}
-	use { "catppuccin/nvim", as = "catppuccin" }	
-	--File Explorer
-	use 'nvim-tree/nvim-tree.lua'
-	use 'nvim-tree/nvim-web-devicons'
-	--Fuzzy Finder
-	use {
-		'nvim-telescope/telescope.nvim',
-		requires = { {'nvim-lua/plenary.nvim'} }
-	}
-	use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
-	--LSP/Autocomplete
-	use "williamboman/mason.nvim"
-	use "williamboman/mason-lspconfig.nvim"
+vim.cmd([[packadd packer.nvim]])
 
-	use 'neovim/nvim-lspconfig'
-	use 'hrsh7th/nvim-cmp'
-	use 'hrsh7th/cmp-nvim-lsp'
-	use 'L3MON4D3/LuaSnip'
-	-- Brackets
-	use {
-		"windwp/nvim-autopairs",
-		event = "InsertEnter",
-		config = function()
-			require("nvim-autopairs").setup {
-				enable_check_bracket_line = true,
-				ignored_next_char = "[%w%.]"
-			}
-		end
-	}
-	use "utilyre/sentiment.nvim"
-	-- LSP Signature Help
-	use {'ray-x/lsp_signature.nvim'}
-	-- Github Copilot
-	use {"github/copilot.vim"}
-	-- Sidekick
-	use {"folke/sidekick.nvim"}
-	-- Undo Trees
-	use "mbbill/undotree"
-	---Harpoon
-	use {
-		"ThePrimeagen/harpoon",
-		branch = "harpoon2",
-		requires = { {"nvim-lua/plenary.nvim"} }
-	}
-	-- Neo-tree
-	use({
-		"nvim-neo-tree/neo-tree.nvim",
-		branch = "v3.x",
-		requires = {
-			"nvim-lua/plenary.nvim",
-			"MunifTanjim/nui.nvim",
-			"nvim-tree/nvim-web-devicons", -- optional, but recommended
-		}
-	})
-	-- Minimal Notifications
-	use 'rcarriga/nvim-notify'
-	-- Wilder (Cmdline autocomplete)
-	use 'gelguy/wilder.nvim'
-	-- Status Line
-	use {
-		'nvim-lualine/lualine.nvim',
-		requires = { 'nvim-tree/nvim-web-devicons', opt = true }
-	}
-	-- Bufferline (VSCode-style tabs at the top)
-	use {'akinsho/bufferline.nvim', requires = { 'nvim-tree/nvim-web-devicons', opt = true }}
+local packer = require('packer').startup(function(use)
+    use 'wbthomason/packer.nvim'
+
+    -- Syntax highlighting
+    use 'nvim-treesitter/nvim-treesitter'
+    use 'nvim-treesitter/nvim-treesitter-textobjects'
+
+    -- Theme
+    use { 'projekt0n/github-nvim-theme' }
+
+    -- File explorer
+    use 'nvim-tree/nvim-tree.lua'
+    use 'nvim-tree/nvim-web-devicons'
+
+    -- Fuzzy finder
+    use {
+        'nvim-telescope/telescope.nvim',
+        requires = { { 'nvim-lua/plenary.nvim' } },
+    }
+    use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
+
+    -- LSP / autocomplete
+    use 'williamboman/mason.nvim'
+    use 'williamboman/mason-lspconfig.nvim'
+    use 'neovim/nvim-lspconfig'
+    use 'hrsh7th/nvim-cmp'
+    use 'hrsh7th/cmp-nvim-lsp'
+    use 'L3MON4D3/LuaSnip'
+    use { 'ray-x/lsp_signature.nvim' }
+
+    -- Brackets
+    use {
+        'windwp/nvim-autopairs',
+        event = 'InsertEnter',
+        config = function()
+            require('nvim-autopairs').setup({
+                enable_check_bracket_line = true,
+                ignored_next_char = '[%w%.]',
+            })
+        end,
+    }
+
+    use 'utilyre/sentiment.nvim'
+
+    -- AI assistance
+    use { 'github/copilot.vim' }
+    use { 'folke/sidekick.nvim' }
+
+    use 'mbbill/undotree'
+
+    use {
+        'ThePrimeagen/harpoon',
+        branch = 'harpoon2',
+        requires = { { 'nvim-lua/plenary.nvim' } },
+    }
+
+    use({
+        'nvim-neo-tree/neo-tree.nvim',
+        branch = 'v3.x',
+        requires = {
+            'nvim-lua/plenary.nvim',
+            'MunifTanjim/nui.nvim',
+            'nvim-tree/nvim-web-devicons', -- optional, but recommended
+        },
+    })
+
+    use 'rcarriga/nvim-notify'
+    use 'gelguy/wilder.nvim' -- cmdline autocomplete
+
+    use {
+        'nvim-lualine/lualine.nvim',
+        requires = { 'nvim-tree/nvim-web-devicons', opt = true },
+    }
+    use { 'akinsho/bufferline.nvim', requires = { 'nvim-tree/nvim-web-devicons', opt = true } }
+
+    if bootstrap then
+        require('packer').sync()
+    end
 end)
+
+return packer
