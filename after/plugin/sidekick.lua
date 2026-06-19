@@ -3,9 +3,15 @@ if not ok then
     return
 end
 
--- Ensure copilot LSP is enabled, since sidekick relies on it
+-- Ensure copilot LSP is enabled, since sidekick relies on it. There's no
+-- standalone `copilot-language-server` binary installed on this machine, but
+-- copilot.vim already bundles the same language server as a Node script —
+-- point at that instead of requiring a separate global npm install.
+local copilot_vim_path = vim.fn.stdpath('data') .. '/site/pack/packer/start/copilot.vim'
+local copilot_language_server = copilot_vim_path .. '/copilot-language-server/dist/language-server.js'
+
 vim.lsp.enable('copilot', {
-    cmd = { 'copilot-language-server', '--stdio' },
+    cmd = { 'node', copilot_language_server, '--stdio' },
     settings = {
         ['github-copilot'] = {
             suggestion = { enabled = true },
