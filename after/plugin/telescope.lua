@@ -80,6 +80,12 @@ require('telescope').setup({
             override_file_sorter = true,
             case_mode = 'smart_case',
         },
+        frecency = {
+            -- db_safe_mode (default true) prompts on every startup to
+            -- confirm pruning stale entries (deleted/moved files) from the
+            -- frecency db — just let it clean those up silently instead.
+            db_safe_mode = false,
+        },
     },
 })
 
