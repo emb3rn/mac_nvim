@@ -21,6 +21,12 @@ copilot.setup({
         -- code — meaning <Tab> just inserted a literal tab since there was
         -- never anything showing to accept.
         hide_during_completion = false,
+        -- Default true: lets <Tab> double as "request a suggestion" when
+        -- none is visible yet, swallowing the keypress (no tab inserted,
+        -- nothing else happens either) instead of falling through to a
+        -- literal tab. Redundant anyway since auto_trigger already fetches
+        -- suggestions as you type — <Tab> should only ever accept one.
+        trigger_on_accept = false,
         keymap = {
             accept = '<Tab>',
             next = '<M-]>',
