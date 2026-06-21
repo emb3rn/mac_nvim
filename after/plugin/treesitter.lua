@@ -3,9 +3,15 @@ require('nvim-treesitter.configs').setup({
     sync_install = false, -- only applies to ensure_installed
     auto_install = true,
 
+    -- Markdown highlighting is disabled here too as defense-in-depth, but
+    -- the actual fix for the Neovim 0.12 crash on markdown is
+    -- after/ftplugin/markdown.lua — see the comment there. Neovim's own
+    -- bundled ftplugin/markdown.lua starts treesitter directly, bypassing
+    -- this plugin's config entirely.
     highlight = {
         enable = true,
         additional_vim_regex_highlighting = false,
+        disable = { 'markdown' },
     },
 
     textobjects = {
