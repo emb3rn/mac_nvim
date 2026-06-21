@@ -3,21 +3,11 @@ if not ok then
     return
 end
 
--- Ensure copilot LSP is enabled, since sidekick relies on it. There's no
--- standalone `copilot-language-server` binary installed on this machine, but
--- copilot.vim already bundles the same language server as a Node script —
--- point at that instead of requiring a separate global npm install.
-local copilot_vim_path = vim.fn.stdpath('data') .. '/site/pack/packer/start/copilot.vim'
-local copilot_language_server = copilot_vim_path .. '/copilot-language-server/dist/language-server.js'
-
-vim.lsp.enable('copilot', {
-    cmd = { 'node', copilot_language_server, '--stdio' },
-    settings = {
-        ['github-copilot'] = {
-            suggestion = { enabled = true },
-        },
-    },
-})
+-- Ensure copilot LSP is enabled, since sidekick relies on it. nvim-lspconfig
+-- ships a default `copilot` server config (cmd = copilot-language-server),
+-- installed via Mason — this is the same client lsp.lua wires ghost-text
+-- completions through, so there's only one Copilot connection total.
+vim.lsp.enable('copilot')
 
 sidekick.setup({
     nes = {
@@ -34,9 +24,15 @@ sidekick.setup({
     },
 })
 
+-- <Tab> does whichever Copilot suggestion is showing: ghost-text completion
+-- first (the common case while typing), then NES jump/apply, else a literal
+-- tab. Matches the single-key muscle memory copilot.vim used to provide.
 vim.keymap.set({ 'n', 'i' }, '<Tab>', function()
+    if vim.lsp.inline_completion.get() then
+        return ''
+    end
     return require('sidekick').nes_jump_or_apply() and '' or '<Tab>'
-end, { expr = true, desc = 'NES Jump/Apply' })
+end, { expr = true, desc = 'Accept completion / NES Jump/Apply' })
 
 vim.keymap.set('n', '<leader>aa', function()
     require('sidekick.cli').toggle()

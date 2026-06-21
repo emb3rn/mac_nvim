@@ -49,6 +49,7 @@ local packer = require('packer').startup(function(use)
     use 'neovim/nvim-lspconfig'
     use 'hrsh7th/nvim-cmp'
     use 'hrsh7th/cmp-nvim-lsp'
+    use 'onsails/lspkind.nvim' -- kind icons (function/variable/etc) in the cmp menu
     use 'L3MON4D3/LuaSnip'
     use { 'ray-x/lsp_signature.nvim' }
 
@@ -69,8 +70,9 @@ local packer = require('packer').startup(function(use)
 
     use 'utilyre/sentiment.nvim'
 
-    -- AI assistance
-    use { 'github/copilot.vim' }
+    -- AI assistance. Ghost-text completions and Next Edit Suggestions both
+    -- go through the single `copilot` LSP client (see lsp.lua/sidekick.lua)
+    -- rather than running copilot.vim's separate bundled client alongside it.
     use { 'folke/sidekick.nvim' }
 
     use 'mbbill/undotree'

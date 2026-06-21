@@ -51,6 +51,15 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
         vim.keymap.set({ 'n', 'x' }, '<F3>', function() vim.lsp.buf.format({ async = true }) end, opts)
         vim.keymap.set('n', '<F4>', vim.lsp.buf.code_action, opts)
+
+        -- Copilot's ghost-text completions, via the same LSP client sidekick
+        -- uses for Next Edit Suggestions (one Copilot connection, not two).
+        -- Accepting them is wired into <Tab> in sidekick.lua, alongside NES.
+        local client = vim.lsp.get_client_by_id(event.data.client_id)
+        if client and client:supports_method('textDocument/inlineCompletion') then
+            vim.lsp.inline_completion.enable(true, { bufnr = event.buf })
+            vim.keymap.set('i', '<C-g>', vim.lsp.inline_completion.select, opts)
+        end
     end,
 })
 
@@ -66,6 +75,7 @@ vim.diagnostic.config({
 })
 
 local cmp = require('cmp')
+local lspkind = require('lspkind')
 cmp.setup({
     sources = {
         { name = 'nvim_lsp' },
@@ -77,9 +87,13 @@ cmp.setup({
             width = 0.4, -- 40% of editor width
             col_offset = 3,
         },
-        documentation = {
-            winhighlight = 'Normal:CmpDoc,FloatBorder:CmpDocBorder',
-        },
+        documentation = false, -- no side popup with the item's docstring/signature
+    },
+    formatting = {
+        format = lspkind.cmp_format({
+            mode = 'symbol_text', -- icon + kind name, e.g. " Function"
+            maxwidth = 50,
+        }),
     },
     mapping = {
         ['<Enter>'] = cmp.mapping.confirm({ select = false }),
@@ -119,7 +133,7 @@ cmp.setup({
 -- https://github.com/VonHeikemen/lsp-zero.nvim/blob/v3.x/doc/md/guide/integrate-with-mason-nvim.md
 require('mason').setup({})
 require('mason-lspconfig').setup({
-    ensure_installed = { 'clangd', 'rust_analyzer', 'pyright', 'ruff' },
+    ensure_installed = { 'clangd', 'rust_analyzer', 'pyright', 'ruff', 'copilot' },
     -- automatic_enable defaults to true: every Mason-installed server is
     -- started automatically via vim.lsp.enable(), picking up the
     -- vim.lsp.config() overrides defined below.
@@ -139,6 +153,23 @@ vim.lsp.config('pyright', {
                     reportOptionalMemberAccess = 'none',
                     reportOptionalOperand = 'none',
                     reportGeneralTypeIssues = 'none',
+                },
+            },
+        },
+    },
+})
+
+-- Copilot reads its settings via `workspace/configuration` with dotted
+-- sections (e.g. "github.copilot"), which Neovim resolves by walking nested
+-- keys in `settings` (`settings.github.copilot`) — so it must be nested like
+-- this, not a flat `['github.copilot']` key, or the server gets `vim.NIL`
+-- and silently treats Next Edit Suggestions as unconfigured/disabled.
+vim.lsp.config('copilot', {
+    settings = {
+        github = {
+            copilot = {
+                nextEditSuggestions = {
+                    enabled = true,
                 },
             },
         },
