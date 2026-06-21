@@ -11,10 +11,16 @@ vim.lsp.enable('copilot')
 
 sidekick.setup({
     nes = {
-        diff = {
-            inline = 'words', -- "chars", "words", or "lines"
-        },
         enabled = true,
+        diff = {
+            -- inline = "words"/"chars" overlays the proposed change directly
+            -- on top of the line being edited, which made it unreadable
+            -- while typing. `false` switches to whole-line diffing instead:
+            -- the original line gets a red background in place, and the
+            -- proposed change renders as a separate green virtual line
+            -- below it — the VS Code NES style, nothing overlapping.
+            inline = false,
+        },
     },
     cli = {
         mux = {
@@ -22,6 +28,27 @@ sidekick.setup({
             enabled = true,
         },
     },
+})
+
+-- By default SidekickDiffDelete/Add/Context link to DiffDelete/DiffText/
+-- DiffChange, and DiffText (used for the proposed addition) renders orange
+-- in this theme — confusing next to the red deletion. Override explicitly:
+-- red for the current/old line, green for the proposed new one, and a
+-- neutral background for surrounding context so only the actual change
+-- stands out.
+local function set_sidekick_hl()
+    vim.api.nvim_set_hl(0, 'SidekickDiffDelete', { bg = '#3b1219' })
+    vim.api.nvim_set_hl(0, 'SidekickDiffAdd', { bg = '#0f3d1e' })
+    -- `bg = 'NONE'` alone produces an empty highlight table, which Neovim
+    -- still treats as "unset" and lets sidekick's own default link win — an
+    -- explicit link to Normal is a real definition that actually sticks.
+    vim.api.nvim_set_hl(0, 'SidekickDiffContext', { link = 'Normal' })
+end
+
+set_sidekick_hl()
+vim.api.nvim_create_autocmd('ColorScheme', {
+    pattern = '*',
+    callback = set_sidekick_hl,
 })
 
 -- <Tab> does whichever Copilot suggestion is showing: ghost-text completion

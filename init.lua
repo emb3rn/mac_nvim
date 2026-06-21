@@ -20,3 +20,4 @@ opt.list = false
 opt.fillchars = { eob = ' ' } -- hide the ~ tilde fill on empty lines
 opt.signcolumn = 'yes' -- always show sign column to prevent layout shift
 opt.clipboard:append('unnamedplus')
+opt.cursorline = true -- subtle highlight on the line under the cursor

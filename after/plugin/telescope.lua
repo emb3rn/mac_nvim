@@ -1,8 +1,17 @@
 local builtin = require('telescope.builtin')
+local actions = require('telescope.actions')
 
 vim.keymap.set('n', '<leader><leader>', function()
-    builtin.find_files({ previewer = false })
-end, { desc = 'Telescope: Find Files (File Name)' })
+    -- frecency ranks results by frequency+recency of access, not just sort
+    -- order/mtime — so a file you keep reopening (e.g. scout.py) climbs to
+    -- the top over time instead of always losing to whatever's alphabetically
+    -- or chronologically first. Falls back to plain find_files if the
+    -- extension somehow isn't loaded.
+    local ok = pcall(require('telescope').extensions.frecency.frecency, { previewer = false })
+    if not ok then
+        builtin.find_files({ previewer = false })
+    end
+end, { desc = 'Telescope: Find Files (Frecency)' })
 
 vim.keymap.set('n', '<leader>sg', function()
     builtin.live_grep({
@@ -57,6 +66,12 @@ require('telescope').setup({
             width = 0.5,
             height = 0.4,
         },
+        -- Recenter the window on the jumped-to line (e.g. after <leader>sf),
+        -- instead of leaving it wherever it happened to land on screen.
+        mappings = {
+            i = { ['<CR>'] = actions.select_default + actions.center },
+            n = { ['<CR>'] = actions.select_default + actions.center },
+        },
     },
     extensions = {
         fzf = {
@@ -71,6 +86,7 @@ require('telescope').setup({
 -- fzf-native: space-separated terms are AND-matched anywhere in the result,
 -- so "realtime s" will match "realtime_simulation".
 pcall(require('telescope').load_extension, 'fzf')
+pcall(require('telescope').load_extension, 'frecency')
 
 -- TelescopeMatching (the highlight on matched characters in results) links
 -- to the `Search` group by default, which is the same yellow-ish highlight

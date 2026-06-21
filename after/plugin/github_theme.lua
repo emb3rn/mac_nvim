@@ -39,6 +39,10 @@ local function set_github_python_hl()
     vim.api.nvim_set_hl(0, '@module.python', { link = '@variable' })
     vim.api.nvim_set_hl(0, '@function.builtin.python', { link = '@function' })
     vim.api.nvim_set_hl(0, '@variable.builtin.python', { fg = '#e6edf3' })
+
+    -- github-theme's own CursorLine background is too close to Normal's to
+    -- read at a glance; give it a clearly distinct (but still subtle) shade.
+    vim.api.nvim_set_hl(0, 'CursorLine', { bg = '#21262d' })
 end
 
 set_github_python_hl()

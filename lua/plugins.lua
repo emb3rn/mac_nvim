@@ -35,6 +35,7 @@ local packer = require('packer').startup(function(use)
         requires = { { 'nvim-lua/plenary.nvim' } },
     }
     use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
+    use { 'nvim-telescope/telescope-frecency.nvim', version = '*' } -- ranks files by frequency+recency of access
 
     -- Lua development (type hints/signatures for the Neovim Lua API)
     use {
