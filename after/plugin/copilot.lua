@@ -28,7 +28,9 @@ copilot.setup({
         -- suggestions as you type — <Tab> should only ever accept one.
         trigger_on_accept = false,
         keymap = {
-            accept = '<Tab>',
+            -- accept is wired manually below instead of `<Tab>` here — see
+            -- that comment for why.
+            accept = false,
             next = '<M-]>',
             prev = '<M-[>',
             dismiss = '<C-]>',
@@ -45,6 +47,31 @@ copilot.setup({
         },
     },
 })
+
+-- copilot.lua's own <Tab>-accept checks `suggestion.is_visible()`, which
+-- just checks whether a fixed extmark id exists — not whether it's backed
+-- by real, current suggestion text. If that extmark is ever left dangling
+-- (cleared logically but not visually, e.g. after a buffer edit shifts
+-- things around), is_visible() returns a false positive, accept() silently
+-- no-ops, and <Tab> does nothing at all: no suggestion inserted, no literal
+-- tab either. Wiring it ourselves lets us detect that case directly — a
+-- real accept always moves the cursor — and self-heal by clearing the
+-- stale marker and falling through to a literal tab instead of swallowing
+-- the keypress.
+vim.keymap.set('i', '<Tab>', function()
+    local suggestion = require('copilot.suggestion')
+    if not suggestion.is_visible() then
+        return '<Tab>'
+    end
+    local cursor_before = vim.api.nvim_win_get_cursor(0)
+    suggestion.accept()
+    local cursor_after = vim.api.nvim_win_get_cursor(0)
+    if cursor_before[1] == cursor_after[1] and cursor_before[2] == cursor_after[2] then
+        pcall(vim.api.nvim_buf_del_extmark, 0, vim.api.nvim_create_namespace('copilot.suggestion'), 1)
+        return '<Tab>'
+    end
+    return ''
+end, { expr = true, desc = 'Accept completion (self-healing against stale suggestion markers)' })
 
 -- copilot-lsp requests a fresh NES suggestion on every TextChangedI (i.e.
 -- while actively typing), which is exactly the red/green popup-while-typing
