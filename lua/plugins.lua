@@ -81,12 +81,10 @@ local packer = require('packer').startup(function(use)
         -- after/plugin/copilot.lua, which runs unconditionally at startup,
         -- well before any lazy-load trigger would fire — lazy-loading this
         -- would mean require('copilot') just fails silently every time.
-        requires = {
-            'copilotlsp-nvim/copilot-lsp',
-            init = function()
-                vim.g.copilot_nes_debounce = 500
-            end,
-        },
+        -- `init` hooks on nested `requires` specs don't actually run in
+        -- packer, so `vim.g.copilot_nes_debounce` is set in
+        -- after/plugin/copilot.lua instead, not here.
+        requires = { 'copilotlsp-nvim/copilot-lsp' },
     }
 
     use 'mbbill/undotree'

@@ -130,6 +130,13 @@ require('mason-lspconfig').setup({
     -- vim.lsp.config() overrides defined below.
 })
 
+-- mason-lspconfig's automatic_enable still auto-starts nvim-lspconfig's
+-- default 'copilot' server (leftover from an earlier sidekick.nvim setup,
+-- since the binary is still installed via Mason) — copilot.lua bundles and
+-- manages its own separate Copilot client entirely, reusing it for NES too,
+-- so this one is a redundant, unused third Copilot process.
+vim.lsp.enable('copilot', false)
+
 -- Pyright: relaxed type-checking severity (see `gi` above for why
 -- implementation lookups intentionally fall back to definition instead of
 -- being forced here — Pyright's open-source server doesn't implement
