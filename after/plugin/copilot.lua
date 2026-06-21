@@ -39,3 +39,40 @@ copilot.setup({
         },
     },
 })
+
+-- copilot-lsp requests a fresh NES suggestion on every TextChangedI (i.e.
+-- while actively typing), which is exactly the red/green popup-while-typing
+-- behavior that's distracting. `lsp_on_init` reads `nes.request_nes` fresh
+-- each time it fires (not a cached reference captured at load time), so
+-- patching the field here — well before the async LSP handshake that calls
+-- lsp_on_init completes — reliably takes effect. Block requests while in
+-- insert/replace mode, then fire one explicitly on InsertLeave so a
+-- suggestion is ready right when you're back in normal mode instead of
+-- popping up mid-edit.
+local nes_ok, nes = pcall(require, 'copilot-lsp.nes')
+if nes_ok then
+    local request_nes = nes.request_nes
+    nes.request_nes = function(...)
+        if vim.fn.mode():match('^[iR]') then
+            return
+        end
+        return request_nes(...)
+    end
+
+    vim.api.nvim_create_autocmd('InsertEnter', {
+        callback = function()
+            nes.clear()
+        end,
+        desc = 'Hide any NES suggestion while typing',
+    })
+
+    vim.api.nvim_create_autocmd('InsertLeave', {
+        callback = function()
+            local client = vim.lsp.get_clients({ name = 'copilot' })[1]
+            if client then
+                nes.request_nes(client)
+            end
+        end,
+        desc = 'Request a fresh NES suggestion once back in normal mode',
+    })
+end
