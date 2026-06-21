@@ -11,7 +11,15 @@ vim.lsp.enable('copilot')
 
 sidekick.setup({
     nes = {
-        enabled = true,
+        -- Disabled: sidekick caches the suggestion's buffer position and
+        -- doesn't always recompute it when the cursor/text shifts (e.g.
+        -- after accepting a ghost-text completion nearby) — see
+        -- https://github.com/folke/sidekick.nvim/issues/125. The visible
+        -- symptom is a garbled, misindented overlay of code that's actually
+        -- already correct, just rendered at a stale position. Open upstream
+        -- bug, not fixable from config. Ghost-text completions below are
+        -- unaffected.
+        enabled = false,
         diff = {
             -- inline = "words"/"chars" overlays the proposed change directly
             -- on top of the line being edited, which made it unreadable
@@ -51,15 +59,14 @@ vim.api.nvim_create_autocmd('ColorScheme', {
     callback = set_sidekick_hl,
 })
 
--- <Tab> does whichever Copilot suggestion is showing: ghost-text completion
--- first (the common case while typing), then NES jump/apply, else a literal
--- tab. Matches the single-key muscle memory copilot.vim used to provide.
+-- <Tab> accepts Copilot's ghost-text completion if one is showing, else
+-- inserts a literal tab.
 vim.keymap.set({ 'n', 'i' }, '<Tab>', function()
     if vim.lsp.inline_completion.get() then
         return ''
     end
-    return require('sidekick').nes_jump_or_apply() and '' or '<Tab>'
-end, { expr = true, desc = 'Accept completion / NES Jump/Apply' })
+    return '<Tab>'
+end, { expr = true, desc = 'Accept completion' })
 
 vim.keymap.set('n', '<leader>aa', function()
     require('sidekick.cli').toggle()
