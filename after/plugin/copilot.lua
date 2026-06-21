@@ -48,6 +48,26 @@ copilot.setup({
     },
 })
 
+local suggestion_ns = vim.api.nvim_create_namespace('copilot.suggestion')
+
+-- For multi-line suggestions, copilot.lua renders the current line's
+-- portion as virt_text and any further suggested lines as virt_lines below
+-- it. The indentation of that first further line is the suggestion's "real"
+-- indent — read directly off the extmark, no private suggestion internals
+-- needed.
+---@return string? leading whitespace of the suggestion's next new line, or
+---nil if the suggestion is single-line (no indent-mismatch concept applies)
+local function suggestion_next_line_indent()
+    local ok, extmark =
+        pcall(vim.api.nvim_buf_get_extmark_by_id, 0, suggestion_ns, 1, { details = true })
+    if not ok or not extmark[3] or not extmark[3].virt_lines or #extmark[3].virt_lines == 0 then
+        return nil
+    end
+    local first_chunk = extmark[3].virt_lines[1][1]
+    local text = first_chunk and first_chunk[1] or ''
+    return text:match('^%s*')
+end
+
 -- copilot.lua's own <Tab>-accept checks `suggestion.is_visible()`, which
 -- just checks whether a fixed extmark id exists — not whether it's backed
 -- by real, current suggestion text. If that extmark is ever left dangling
@@ -58,20 +78,34 @@ copilot.setup({
 -- real accept always moves the cursor — and self-heal by clearing the
 -- stale marker and falling through to a literal tab instead of swallowing
 -- the keypress.
+--
+-- Also: only accept a multi-line suggestion once the cursor's own
+-- indentation matches the indent of its next suggested line. Otherwise
+-- <Tab> just indents normally (which naturally walks you toward a match)
+-- instead of jumping you straight to a deeper indent than you're at.
 vim.keymap.set('i', '<Tab>', function()
     local suggestion = require('copilot.suggestion')
     if not suggestion.is_visible() then
         return '<Tab>'
     end
+
+    local next_indent = suggestion_next_line_indent()
+    if next_indent then
+        local current_indent = vim.api.nvim_get_current_line():match('^%s*')
+        if next_indent ~= current_indent then
+            return '<Tab>'
+        end
+    end
+
     local cursor_before = vim.api.nvim_win_get_cursor(0)
     suggestion.accept()
     local cursor_after = vim.api.nvim_win_get_cursor(0)
     if cursor_before[1] == cursor_after[1] and cursor_before[2] == cursor_after[2] then
-        pcall(vim.api.nvim_buf_del_extmark, 0, vim.api.nvim_create_namespace('copilot.suggestion'), 1)
+        pcall(vim.api.nvim_buf_del_extmark, 0, suggestion_ns, 1)
         return '<Tab>'
     end
     return ''
-end, { expr = true, desc = 'Accept completion (self-healing against stale suggestion markers)' })
+end, { expr = true, desc = 'Accept completion (self-healing, indent-gated)' })
 
 -- copilot-lsp requests a fresh NES suggestion on every TextChangedI (i.e.
 -- while actively typing), which is exactly the red/green popup-while-typing
