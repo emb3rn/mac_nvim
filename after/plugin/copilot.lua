@@ -39,13 +39,32 @@ copilot.setup({
     nes = {
         enabled = true,
         keymap = {
-            -- Kept off <Tab> deliberately so it can never shadow the
-            -- ghost-text accept above.
-            accept_and_goto = '<leader>cn',
+            -- NES suggestions only ever show in normal mode (requests are
+            -- blocked while in insert/replace mode below), and our own <Tab>
+            -- mapping above is insert-mode-only — so binding this to <Tab>
+            -- too can't collide with it. copilot.lua registers this with
+            -- passthrough (see keymaps/init.lua), so when there's nothing
+            -- pending it falls through to whatever <Tab> would otherwise do
+            -- in normal mode.
+            accept_and_goto = '<Tab>',
             accept = false,
             dismiss = '<Esc>',
         },
     },
+})
+
+-- CopilotLspNesDelete/Add default to DiffDelete (red bg) for the current
+-- text being replaced and DiffAdd (green bg) for the suggested replacement.
+-- The red box on text you're already looking at is the distracting half —
+-- blend it into the background entirely and keep only the green addition.
+local function set_nes_hl()
+    vim.api.nvim_set_hl(0, 'CopilotLspNesDelete', { link = 'Normal' })
+end
+
+set_nes_hl()
+vim.api.nvim_create_autocmd('ColorScheme', {
+    callback = set_nes_hl,
+    desc = 'Reapply transparent NES delete highlight after colorscheme change',
 })
 
 local suggestion_ns = vim.api.nvim_create_namespace('copilot.suggestion')
