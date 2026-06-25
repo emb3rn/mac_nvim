@@ -56,6 +56,16 @@ vim.keymap.set('n', '<leader>sg', function()
     })
 end, { desc = 'Telescope: Grep (Content Search)' })
 
+-- Exclude variable/field/constant/property kinds — too noisy. Telescope
+-- only accepts an include-list, so enumerate everything else. Shared
+-- between the current-file and workspace-wide symbol searches below.
+local symbol_kinds = {
+    'function', 'method', 'constructor',
+    'class', 'interface', 'struct', 'enum', 'enummember',
+    'module', 'namespace', 'package',
+    'typeparameter', 'event', 'operator',
+}
+
 vim.keymap.set('n', '<leader>sf', function()
     -- Search actual symbols (functions, classes, ...) via LSP rather than
     -- raw text. Falls back to a fuzzy line search if no LSP client in the
@@ -70,21 +80,38 @@ vim.keymap.set('n', '<leader>sf', function()
     end
 
     if has_symbols then
-        builtin.lsp_document_symbols({
-            -- Exclude variable/field/constant/property kinds — too noisy.
-            -- Telescope only accepts an include-list, so enumerate
-            -- everything else.
-            symbols = {
-                'function', 'method', 'constructor',
-                'class', 'interface', 'struct', 'enum', 'enummember',
-                'module', 'namespace', 'package',
-                'typeparameter', 'event', 'operator',
-            },
-        })
+        builtin.lsp_document_symbols({ symbols = symbol_kinds })
     else
         builtin.current_buffer_fuzzy_find({ previewer = false })
     end
 end, { desc = 'Telescope: Search Symbols In File' })
+
+vim.keymap.set('n', '<leader>sgf', function()
+    -- Same symbol search as <leader>sf, but across the whole workspace
+    -- instead of just the current file. Dynamic (re-queries the LSP server
+    -- per keystroke) rather than the static lsp_workspace_symbols, which
+    -- only queries once up front with an empty filter.
+    local clients = vim.lsp.get_clients({ bufnr = 0 })
+    local has_symbols = false
+    for _, client in ipairs(clients) do
+        if client:supports_method('workspace/symbol') then
+            has_symbols = true
+            break
+        end
+    end
+
+    if not has_symbols then
+        vim.notify('No LSP server attached supports workspace symbols', vim.log.levels.WARN)
+        return
+    end
+
+    builtin.lsp_dynamic_workspace_symbols({
+        symbols = symbol_kinds,
+        path_display = function(_, path)
+            return cap_path_depth(path, 3)
+        end,
+    })
+end, { desc = 'Telescope: Search Functions/Symbols (Workspace)' })
 
 require('telescope').setup({
     defaults = {
