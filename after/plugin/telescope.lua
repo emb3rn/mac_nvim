@@ -49,7 +49,11 @@ vim.keymap.set('n', '<leader>sg', function()
                 return entry
             end
             entry.display = function(e)
-                return vim.fn.fnamemodify(e.filename, ':t') .. ':' .. e.lnum .. ': ' .. (e.text or '')
+                -- e.text is the raw matched line, indentation and all — strip
+                -- the leading whitespace so results aren't padded out wide
+                -- enough to push the actual match off the edge of the window.
+                local text = (e.text or ''):gsub('^%s+', '')
+                return vim.fn.fnamemodify(e.filename, ':t') .. ':' .. e.lnum .. ': ' .. text
             end
             return entry
         end,
