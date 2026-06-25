@@ -107,8 +107,10 @@ vim.keymap.set('n', '<leader>saf', function()
 
     builtin.lsp_dynamic_workspace_symbols({
         symbols = symbol_kinds,
+        -- Same reasoning as <leader>sg: which directory a symbol lives in is
+        -- rarely useful here, just the filename to disambiguate.
         path_display = function(_, path)
-            return cap_path_depth(path, 3)
+            return vim.fn.fnamemodify(path, ':t')
         end,
     })
 end, { desc = 'Telescope: Search Functions/Symbols (Workspace)' })
