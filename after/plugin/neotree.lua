@@ -37,6 +37,7 @@ require('neo-tree').setup({
 
 vim.api.nvim_create_autocmd('ColorScheme', {
   pattern = '*',
+  group = vim.api.nvim_create_augroup('user_neotree_colors', { clear = true }),
   callback = function()
     vim.api.nvim_set_hl(0, 'NeoTreeNormal', { link = 'Normal' })
     vim.api.nvim_set_hl(0, 'NeoTreeNormalNC', { link = 'Normal' })

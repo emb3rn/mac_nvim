@@ -4,6 +4,7 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
 
 vim.api.nvim_create_autocmd('LspAttach', {
     desc = 'LSP actions',
+    group = vim.api.nvim_create_augroup('user_lsp_attach', { clear = true }),
     callback = function(event)
         local opts = { buffer = event.buf }
 
@@ -173,5 +174,6 @@ end
 set_cmp_hl()
 vim.api.nvim_create_autocmd('ColorScheme', {
     pattern = '*',
+    group = vim.api.nvim_create_augroup('user_lsp_cmp_colors', { clear = true }),
     callback = set_cmp_hl,
 })

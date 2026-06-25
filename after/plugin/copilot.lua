@@ -64,6 +64,7 @@ end
 set_nes_hl()
 vim.api.nvim_create_autocmd('ColorScheme', {
     callback = set_nes_hl,
+    group = vim.api.nvim_create_augroup('user_copilot_nes_colors', { clear = true }),
     desc = 'Reapply transparent NES delete highlight after colorscheme change',
 })
 
@@ -145,7 +146,10 @@ if nes_ok then
         return request_nes(...)
     end
 
+    local nes_gate_group = vim.api.nvim_create_augroup('user_copilot_nes_insert_gate', { clear = true })
+
     vim.api.nvim_create_autocmd('InsertEnter', {
+        group = nes_gate_group,
         callback = function()
             nes.clear()
         end,
@@ -153,6 +157,7 @@ if nes_ok then
     })
 
     vim.api.nvim_create_autocmd('InsertLeave', {
+        group = nes_gate_group,
         callback = function()
             local client = vim.lsp.get_clients({ name = 'copilot' })[1]
             if client then

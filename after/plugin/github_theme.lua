@@ -48,5 +48,6 @@ end
 set_github_python_hl()
 vim.api.nvim_create_autocmd('ColorScheme', {
     pattern = '*',
+    group = vim.api.nvim_create_augroup('user_github_theme_colors', { clear = true }),
     callback = set_github_python_hl,
 })

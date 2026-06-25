@@ -167,5 +167,6 @@ end
 set_telescope_hl()
 vim.api.nvim_create_autocmd('ColorScheme', {
     pattern = '*',
+    group = vim.api.nvim_create_augroup('user_telescope_colors', { clear = true }),
     callback = set_telescope_hl,
 })

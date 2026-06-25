@@ -20,5 +20,6 @@ end
 set_float_hl()
 vim.api.nvim_create_autocmd('ColorScheme', {
     pattern = '*',
+    group = vim.api.nvim_create_augroup('user_harpoon_colors', { clear = true }),
     callback = set_float_hl,
 })

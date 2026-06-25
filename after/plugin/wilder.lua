@@ -28,5 +28,6 @@ end
 set_wilder_hl()
 vim.api.nvim_create_autocmd('ColorScheme', {
     pattern = '*',
+    group = vim.api.nvim_create_augroup('user_wilder_colors', { clear = true }),
     callback = set_wilder_hl,
 })

@@ -17,6 +17,7 @@ lint.linters.luacheck.args = {
 }
 
 vim.api.nvim_create_autocmd('BufWritePost', {
+    group = vim.api.nvim_create_augroup('user_lint_on_write', { clear = true }),
     callback = function()
         lint.try_lint()
     end,
