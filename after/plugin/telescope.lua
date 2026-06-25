@@ -1,15 +1,35 @@
 local builtin = require('telescope.builtin')
 local actions = require('telescope.actions')
 
+-- Caps a displayed path to at most `depth` trailing components, e.g.
+-- "polybot/modules/scout/realtime.py" with depth=3 -> "scout/realtime.py".
+---@param path string
+---@param depth integer
+local function cap_path_depth(path, depth)
+    local parts = vim.split(path, '/', { plain = true })
+    if #parts <= depth then
+        return path
+    end
+    return table.concat(vim.list_slice(parts, #parts - depth + 1), '/')
+end
+
 vim.keymap.set('n', '<leader><leader>', function()
     -- frecency ranks results by frequency+recency of access, not just sort
     -- order/mtime — so a file you keep reopening (e.g. scout.py) climbs to
     -- the top over time instead of always losing to whatever's alphabetically
     -- or chronologically first. Falls back to plain find_files if the
     -- extension somehow isn't loaded.
-    local ok = pcall(require('telescope').extensions.frecency.frecency, { previewer = false })
+    local opts = {
+        previewer = false,
+        -- Full path is rarely useful here, just enough to disambiguate
+        -- same-named files in different dirs — cap at 3 components deep.
+        path_display = function(_, path)
+            return cap_path_depth(path, 3)
+        end,
+    }
+    local ok = pcall(require('telescope').extensions.frecency.frecency, opts)
     if not ok then
-        builtin.find_files({ previewer = false })
+        builtin.find_files(opts)
     end
 end, { desc = 'Telescope: Find Files (Frecency)' })
 
@@ -19,6 +39,20 @@ vim.keymap.set('n', '<leader>sg', function()
         -- "(" (e.g. typing "if len(") is an invalid regex and rg silently
         -- returns nothing. --fixed-strings makes it a literal search instead.
         additional_args = { '--fixed-strings' },
+        -- Default display is "relative/path/to/file.py:line: text" — drop
+        -- the path entirely and show just the filename, since which exact
+        -- directory a match is in is rarely what you're scanning results for.
+        entry_maker = function(line)
+            local make_entry = require('telescope.make_entry').gen_from_vimgrep({})
+            local entry = make_entry(line)
+            if not entry then
+                return entry
+            end
+            entry.display = function(e)
+                return vim.fn.fnamemodify(e.filename, ':t') .. ':' .. e.lnum .. ': ' .. (e.text or '')
+            end
+            return entry
+        end,
     })
 end, { desc = 'Telescope: Grep (Content Search)' })
 
