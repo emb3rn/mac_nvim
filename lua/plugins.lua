@@ -71,21 +71,8 @@ local packer = require('packer').startup(function(use)
 
     use 'utilyre/sentiment.nvim'
 
-    -- AI assistance: copilot.lua handles ghost-text completions, and (via
-    -- the copilot-lsp dependency) Next Edit Suggestions — GitHub's docs
-    -- call this NES integration experimental, but it's the closest thing to
-    -- a single combined package for both features.
-    use {
-        'zbirenbaum/copilot.lua',
-        -- No lazy `event` here: our setup() call lives in
-        -- after/plugin/copilot.lua, which runs unconditionally at startup,
-        -- well before any lazy-load trigger would fire — lazy-loading this
-        -- would mean require('copilot') just fails silently every time.
-        -- `init` hooks on nested `requires` specs don't actually run in
-        -- packer, so `vim.g.copilot_nes_debounce` is set in
-        -- after/plugin/copilot.lua instead, not here.
-        requires = { 'copilotlsp-nvim/copilot-lsp' },
-    }
+    -- AI assistance: ghost-text completions via copilot.lua.
+    use 'zbirenbaum/copilot.lua'
 
     use 'mbbill/undotree'
 
