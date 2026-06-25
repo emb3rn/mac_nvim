@@ -86,7 +86,7 @@ vim.keymap.set('n', '<leader>sf', function()
     end
 end, { desc = 'Telescope: Search Symbols In File' })
 
-vim.keymap.set('n', '<leader>sgf', function()
+vim.keymap.set('n', '<leader>saf', function()
     -- Same symbol search as <leader>sf, but across the whole workspace
     -- instead of just the current file. Dynamic (re-queries the LSP server
     -- per keystroke) rather than the static lsp_workspace_symbols, which
