@@ -9,10 +9,22 @@ vim.api.nvim_create_autocmd('LspAttach', {
         local opts = { buffer = event.buf }
 
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-        -- Override builtin `gd` (text-search "local declaration", stays in
-        -- the current file) with the real LSP definition request, which
-        -- jumps across files.
-        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+        -- Show definitions in Telescope so the destination can be previewed
+        -- before jumping, while keeping the result label to the filename.
+        local function definitions_picker()
+            local ok, builtin = pcall(require, 'telescope.builtin')
+            if ok then
+                builtin.lsp_definitions({
+                    path_display = function(_, path)
+                        return vim.fn.fnamemodify(path, ':t')
+                    end,
+                })
+            else
+                vim.lsp.buf.definition()
+            end
+        end
+        vim.keymap.set('n', 'gd', definitions_picker, opts)
+        vim.keymap.set('n', '<leader>gd', definitions_picker, opts)
         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
         vim.keymap.set('n', 'gi', function()
             local clients = vim.lsp.get_clients({ bufnr = 0 })
@@ -41,7 +53,11 @@ vim.api.nvim_create_autocmd('LspAttach', {
         local function references_picker()
             local ok, builtin = pcall(require, 'telescope.builtin')
             if ok then
-                builtin.lsp_references()
+                builtin.lsp_references({
+                    path_display = function(_, path)
+                        return vim.fn.fnamemodify(path, ':t')
+                    end,
+                })
             else
                 vim.lsp.buf.references()
             end

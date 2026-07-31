@@ -1,6 +1,10 @@
 local builtin = require('telescope.builtin')
 local actions = require('telescope.actions')
 
+local function filename_only(_, path)
+    return vim.fn.fnamemodify(path, ':t')
+end
+
 -- Caps a displayed path to at most `depth` trailing components, e.g.
 -- "polybot/modules/scout/realtime.py" with depth=3 -> "scout/realtime.py".
 ---@param path string
@@ -113,9 +117,7 @@ vim.keymap.set('n', '<leader>af', function()
         symbols = symbol_kinds,
         -- Same reasoning as <leader>sg: which directory a symbol lives in is
         -- rarely useful here, just the filename to disambiguate.
-        path_display = function(_, path)
-            return vim.fn.fnamemodify(path, ':t')
-        end,
+        path_display = filename_only,
     })
 end, { desc = 'Telescope: Search Functions/Symbols (Workspace)' })
 
@@ -130,8 +132,8 @@ require('telescope').setup({
                 prompt_position = 'top',
                 preview_width = 0.55,
             },
-            width = 0.5,
-            height = 0.4,
+            width = 0.85,
+            height = 0.8,
         },
         -- Recenter the window on the jumped-to line (e.g. after <leader>sf),
         -- instead of leaving it wherever it happened to land on screen.
