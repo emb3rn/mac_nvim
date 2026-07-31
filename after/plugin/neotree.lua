@@ -17,7 +17,10 @@ vim.api.nvim_create_autocmd('VimEnter', {
   end,
 })
 
-require('neo-tree').setup({
+local ok, neo_tree = pcall(require, 'neo-tree')
+if not ok then return end
+
+neo_tree.setup({
   close_if_last_window = false,
   popup_border_style = 'rounded',
   enable_git_status = true,

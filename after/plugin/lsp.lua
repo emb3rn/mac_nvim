@@ -82,8 +82,9 @@ vim.diagnostic.config({
     },
 })
 
-local cmp = require('cmp')
-local lspkind = require('lspkind')
+local cmp_ok, cmp = pcall(require, 'cmp')
+local lspkind_ok, lspkind = pcall(require, 'lspkind')
+if not cmp_ok or not lspkind_ok then return end
 cmp.setup({
     sources = {
         { name = 'nvim_lsp' },
@@ -139,8 +140,12 @@ cmp.setup({
 -- NOTE: mason-lspconfig v2 (Neovim 0.11+) dropped the old `handlers` option
 -- in favor of `vim.lsp.config()` + automatic `vim.lsp.enable()`. See
 -- https://github.com/VonHeikemen/lsp-zero.nvim/blob/v3.x/doc/md/guide/integrate-with-mason-nvim.md
-require('mason').setup({})
-require('mason-lspconfig').setup({
+local mason_ok, mason = pcall(require, 'mason')
+local mason_lsp_ok, mason_lspconfig = pcall(require, 'mason-lspconfig')
+if not mason_ok or not mason_lsp_ok then return end
+
+mason.setup({})
+mason_lspconfig.setup({
     ensure_installed = { 'clangd', 'rust_analyzer', 'pyright', 'ruff' },
     -- automatic_enable defaults to true: every Mason-installed server is
     -- started automatically via vim.lsp.enable(), picking up the

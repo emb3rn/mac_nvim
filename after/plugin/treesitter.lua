@@ -1,4 +1,7 @@
-require('nvim-treesitter.configs').setup({
+local ok, configs = pcall(require, 'nvim-treesitter.configs')
+if not ok then return end
+
+configs.setup({
     ensure_installed = { 'c', 'lua', 'vim', 'vimdoc', 'query', 'python' },
     sync_install = false, -- only applies to ensure_installed
     auto_install = true,

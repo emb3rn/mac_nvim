@@ -1,4 +1,6 @@
-local wilder = require('wilder')
+local ok, wilder = pcall(require, 'wilder')
+if not ok then return end
+
 wilder.setup({ modes = { ':', '/', '?' } })
 
 wilder.set_option('pipeline', {

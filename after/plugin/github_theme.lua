@@ -1,4 +1,7 @@
-require('github-theme').setup({})
+local ok, github_theme = pcall(require, 'github-theme')
+if not ok then return end
+
+github_theme.setup({})
 
 -- Align nvim-treesitter highlighting with VS Code's "GitHub Dark Default"
 -- theme for Python, since github-theme.nvim's own treesitter mappings drift

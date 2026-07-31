@@ -1,1 +1,1 @@
-vim.cmd.colorscheme('github_dark_default')
+pcall(vim.cmd.colorscheme, 'github_dark_default')

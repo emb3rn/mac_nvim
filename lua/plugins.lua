@@ -16,8 +16,8 @@ local packer = require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'
 
     -- Syntax highlighting
-    use 'nvim-treesitter/nvim-treesitter'
-    use 'nvim-treesitter/nvim-treesitter-textobjects'
+    use { 'nvim-treesitter/nvim-treesitter', branch = 'master' }
+    use { 'nvim-treesitter/nvim-treesitter-textobjects', branch = 'master' }
 
     -- Theme
     use { 'projekt0n/github-nvim-theme' }

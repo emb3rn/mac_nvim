@@ -1,3 +1,6 @@
+local ok, telescope = pcall(require, 'telescope')
+if not ok then return end
+
 local builtin = require('telescope.builtin')
 local actions = require('telescope.actions')
 
@@ -121,7 +124,7 @@ vim.keymap.set('n', '<leader>af', function()
     })
 end, { desc = 'Telescope: Search Functions/Symbols (Workspace)' })
 
-require('telescope').setup({
+telescope.setup({
     defaults = {
         sorting_strategy = 'ascending',
         prompt_prefix = ' ',
@@ -160,8 +163,8 @@ require('telescope').setup({
 
 -- fzf-native: space-separated terms are AND-matched anywhere in the result,
 -- so "realtime s" will match "realtime_simulation".
-pcall(require('telescope').load_extension, 'fzf')
-pcall(require('telescope').load_extension, 'frecency')
+pcall(telescope.load_extension, 'fzf')
+pcall(telescope.load_extension, 'frecency')
 
 -- TelescopeMatching (the highlight on matched characters in results) links
 -- to the `Search` group by default, which is the same yellow-ish highlight
