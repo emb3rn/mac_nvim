@@ -10,14 +10,35 @@ if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
     })
 end
 
+local config_path = vim.fn.stdpath('config')
+local config_after_path = config_path .. '/after'
+
+local function restore_config_runtime()
+    vim.opt.runtimepath:append(config_path)
+    vim.opt.runtimepath:append(config_after_path)
+end
+
+if bootstrap then
+    -- Do not let this config's after/plugin files race Packer's first install.
+    vim.opt.runtimepath:remove(config_path)
+    vim.opt.runtimepath:remove(config_after_path)
+    vim.api.nvim_create_autocmd('User', {
+        pattern = 'PackerComplete',
+        once = true,
+        callback = function()
+            vim.schedule(restore_config_runtime)
+        end,
+    })
+end
+
 vim.cmd([[packadd packer.nvim]])
 
 local packer = require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'
 
     -- Syntax highlighting
-    use { 'nvim-treesitter/nvim-treesitter', branch = 'master' }
-    use { 'nvim-treesitter/nvim-treesitter-textobjects', branch = 'master' }
+    use 'nvim-treesitter/nvim-treesitter'
+    use 'nvim-treesitter/nvim-treesitter-textobjects'
 
     -- Theme
     use { 'projekt0n/github-nvim-theme' }

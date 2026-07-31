@@ -4,8 +4,8 @@ vim.g.mapleader = ' '
 vim.g.loaded_matchparen = 1
 vim.g.netrw_banner = 0
 
-require('plugins')
 require('remap')
+require('plugins')
 
 local opt = vim.opt
 opt.number = true

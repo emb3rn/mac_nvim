@@ -1,7 +1,4 @@
-local ok, bufferline = pcall(require, 'bufferline')
-if not ok then return end
-
-bufferline.setup({
+require('bufferline').setup({
     options = {
         mode = 'buffers',
         separator_style = { '', '' },

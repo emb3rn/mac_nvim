@@ -3,10 +3,8 @@
 -- which does check), so calling setup() a second time in the same session
 -- (e.g. on :ReloadConfig) throws. Only run it once per session.
 if not vim.g.loaded_sentiment then
-    local ok, sentiment = pcall(require, 'sentiment')
-    if not ok then return end
     vim.g.loaded_sentiment = true
-    sentiment.setup({
+    require('sentiment').setup({
         included_buftypes = {
             [''] = true,
             ['nofile'] = true,

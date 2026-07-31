@@ -9,17 +9,7 @@ end
 vim.keymap.set('n', '<leader>e', '<cmd>Neotree toggle<CR>', { desc = 'NeoTree: Toggle' })
 vim.keymap.set('n', '<leader>ww', neotree_switch_focus, { desc = 'NeoTree: Switch Focus' })
 
-vim.api.nvim_create_autocmd('VimEnter', {
-  callback = function()
-    if vim.fn.argc() == 0 then
-      vim.cmd('Neotree')
-    end
-  end,
-})
-
-local ok, neo_tree = pcall(require, 'neo-tree')
-if not ok then return end
-
+local neo_tree = require('neo-tree')
 neo_tree.setup({
   close_if_last_window = false,
   popup_border_style = 'rounded',
@@ -36,6 +26,14 @@ neo_tree.setup({
       hide_gitignored = false,
     },
   },
+})
+
+vim.api.nvim_create_autocmd('VimEnter', {
+  callback = function()
+    if vim.fn.argc() == 0 then
+      vim.cmd('Neotree')
+    end
+  end,
 })
 
 vim.api.nvim_create_autocmd('ColorScheme', {

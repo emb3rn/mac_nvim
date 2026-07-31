@@ -20,10 +20,7 @@ local function mode(a_fg, rest_fg)
     return { a = { bg = 'NONE', fg = a_fg }, b = section, c = section, x = section, y = section, z = section }
 end
 
-local ok, lualine = pcall(require, 'lualine')
-if not ok then return end
-
-lualine.setup({
+require('lualine').setup({
     options = {
         icons_enabled = true,
         theme = {

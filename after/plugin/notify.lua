@@ -1,7 +1,4 @@
-local ok, notify = pcall(require, 'notify')
-if not ok then return end
-
-notify.setup({
+require('notify').setup({
     stages = 'fade',
     timeout = 1000,
     max_height = 5,
