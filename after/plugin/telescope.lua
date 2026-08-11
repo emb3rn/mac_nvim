@@ -157,6 +157,10 @@ require('telescope').setup({
             -- confirm pruning stale entries (deleted/moved files) from the
             -- frecency db — just let it clean those up silently instead.
             db_safe_mode = false,
+            -- Search with fuzzy matching rather than the extension's exact
+            -- matcher, while keeping recently visited files ranked first.
+            matcher = 'fuzzy',
+            workspace_scan_cmd = { 'rg', '-.g', '!.git', '--files' },
         },
     },
 })
