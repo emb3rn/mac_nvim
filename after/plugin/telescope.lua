@@ -25,6 +25,9 @@ vim.keymap.set('n', '<leader><leader>', function()
     -- extension somehow isn't loaded.
     local opts = {
         previewer = false,
+        -- Include every file under the current project while still ranking
+        -- files that have been visited more often or more recently first.
+        workspace = 'CWD',
         -- Full path is rarely useful here, just enough to disambiguate
         -- same-named files in different dirs — cap at 3 components deep.
         path_display = function(_, path)
