@@ -26,7 +26,18 @@ copilot.setup({
             dismiss = '<C-]>',
         },
     },
-    nes = { enabled = false },
+    -- Next Edit Suggestions (NES) are normal-mode, multi-location edits.
+    -- Keep their keys separate from insert-mode <Tab>, which accepts the
+    -- ordinary Copilot ghost-text completion above.
+    nes = {
+        enabled = true,
+        auto_trigger = true,
+        keymap = {
+            accept_and_goto = '<leader>ca',
+            accept = false,
+            dismiss = '<leader>cx',
+        },
+    },
 })
 
 local suggestion_ns = vim.api.nvim_create_namespace('copilot.suggestion')

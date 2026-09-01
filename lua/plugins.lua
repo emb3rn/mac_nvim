@@ -92,8 +92,11 @@ local packer = require('packer').startup(function(use)
 
     use 'utilyre/sentiment.nvim'
 
-    -- AI assistance: ghost-text completions via copilot.lua.
-    use 'zbirenbaum/copilot.lua'
+    -- AI assistance: ghost-text completions and next-edit suggestions.
+    use {
+        'zbirenbaum/copilot.lua',
+        requires = { 'copilotlsp-nvim/copilot-lsp' },
+    }
 
     use 'mbbill/undotree'
 
